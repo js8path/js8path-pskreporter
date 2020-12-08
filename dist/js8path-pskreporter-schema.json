@@ -1,0 +1,611 @@
+{
+  "query": {
+    "requestData": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "http://schemas.js8path.net/js8path/pskreporter/query/requestData.json",
+      "title": "PSKReporter Query Request Data",
+      "description": "PSKReporter Query Request Data",
+      "type": "object",
+      "properties": {
+        "senderCallsign": {
+          "title": "Sender Callsign",
+          "description": "Specifies the sending callsign of interest",
+          "type": "string",
+          "pattern": "^.*$"
+        },
+        "receiverCallsign": {
+          "title": "Receiver Callsign",
+          "description": "Specifies the receiving callsign of interest",
+          "type": "string",
+          "pattern": "^.*$"
+        },
+        "callsign": {
+          "title": "Callsign",
+          "description": "Specifies the callsign of interest. Specify only one of senderCallsign, receiverCallsign, callsign",
+          "type": "string",
+          "pattern": "^.*$"
+        },
+        "flowStartSeconds": {
+          "title": "Flow Start Seconds",
+          "description": "A negative number of seconds to indicate how much data to retrieve. This cannot be more than 24 hours.",
+          "type": "integer",
+          "minimum": -86400,
+          "maximum": -1
+        },
+        "rptlimit": {
+          "title": "Report Limit",
+          "description": "Limit the number of records returned.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "rronly": {
+          "title": "Reception Reports Only",
+          "description": "Only return the reception report records if non zero.",
+          "type": "integer",
+          "default": 0
+        },
+        "mode": {
+          "title": "Mode",
+          "description": "The mode of the signal that was detected.",
+          "type": "string"
+        },
+        "noactive": {
+          "title": "Reception Reports Only",
+          "description": "Do not return the active monitors if non zero.",
+          "type": "integer",
+          "default": 0
+        },
+        "frange": {
+          "title": "Mode",
+          "description": "A lower and upper limit of frequency. E.g. 14000000-14100000.",
+          "type": "string",
+          "pattern": "^[1-9]\\d*]\\-[1-9]\\d*$"
+        },
+        "nolocator": {
+          "title": "No Locator",
+          "description": "If non zero, then include reception reports that do not include a locator.",
+          "type": "integer",
+          "default": 0
+        },
+        "callback": {
+          "title": "Callback",
+          "description": "Causes the returned document to be javascript, and it will invoke the function named in the callback.",
+          "type": "string"
+        },
+        "statistics": {
+          "title": "Statistics",
+          "description": "Includes some statistical information.",
+          "type": "integer",
+          "default": 0
+        },
+        "modify": {
+          "title": "Modify",
+          "description": "If this has the value 'grid' then the callsign are interpreted as grid squares.",
+          "type": "string"
+        },
+        "lastseqno": {
+          "title": "Last Sequence Number",
+          "description": "Limits search to records with a sequence number greater than or equal to this parameter. The last sequence number in the database is returned on each response.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "appcontact": {
+          "title": "App Contact Email",
+          "description": "Email address for PSKReporter to contact if there is an issue.",
+          "type": "string",
+          "pattern": "^(([^<>()\\[\\]\\\\.,;:\\s@\"]+(\\.[^<>()\\[\\]\\\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$"
+        }
+      },
+      "required": []
+    }
+  },
+  "rawXml": {
+    "queryResponse": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "http://schemas.js8path.net/js8path/pskreporter/rawXml/queryResponse.json",
+      "title": "PSKReporter Raw XML Query Response",
+      "description": "Raw PSKReporter Query Response XML string",
+      "type": "string",
+      "pattern": ".*"
+    }
+  },
+  "parsedXml": {
+    "queryResponse": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "http://schemas.js8path.net/js8path/pskreporter/parsedXml/queryResponse.json",
+      "title": "PSKReporter Query Response",
+      "description": "Raw PSKReporter Query Response decoded from XML",
+      "type": "object",
+      "properties": {
+        "receptionReports": {
+          "title": "Reception Reports Data",
+          "description": "All raw data parsed from PSKReporter XML response",
+          "$ref": "http://schemas.js8path.net/js8path/pskreporter/parsedXml/receptionReportsData.json"
+        }
+      },
+      "required": [
+        "receptionReports"
+      ]
+    },
+    "receptionReportsData": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "http://schemas.js8path.net/js8path/pskreporter/parsedXml/receptionReportsData.json",
+      "title": "Reception Reports Data",
+      "description": "Top level data structure for all reception report data from a query",
+      "type": "object",
+      "properties": {
+        "currentSeconds": {
+          "title": "Current Seconds",
+          "description": "The current seconds value of the query",
+          "$ref": "http://schemas.js8path.net/js8path/data/general/positiveIntegerString.json"
+        },
+        "activeReceiver": {
+          "title": "Active Receiver List",
+          "description": "List of active receivers",
+          "type": "array",
+          "items": {
+            "$ref": "http://schemas.js8path.net/js8path/pskreporter/parsedXml/activeReceiver.json"
+          }
+        },
+        "lastSequenceNumber": {
+          "title": "Last Sequence Number Object",
+          "description": "Contains last sequence number of query results",
+          "type": "object",
+          "properties": {
+            "value": {
+              "title": "Last Sequence Number Value",
+              "description": "The value of the last sequence number",
+              "$ref": "http://schemas.js8path.net/js8path/data/general/positiveIntegerString.json"
+            }
+          },
+          "required": [
+            "value"
+          ]
+        },
+        "maxFlowStartSeconds": {
+          "title": "Max Flow Start Seconds Object",
+          "description": "Contains last max flow start seconds of query results",
+          "type": "object",
+          "properties": {
+            "value": {
+              "title": "Max Flow Start Seconds",
+              "description": "The value of the max flow start seconds",
+              "$ref": "http://schemas.js8path.net/js8path/data/general/positiveIntegerString.json"
+            }
+          },
+          "required": [
+            "value"
+          ]
+        },
+        "receptionReport": {
+          "title": "Reception Reports List",
+          "description": "List of Reception Reports",
+          "type": "array",
+          "items": {
+            "$ref": "http://schemas.js8path.net/js8path/pskreporter/parsedXml/receptionReport.json"
+          }
+        },
+        "activeCallsign": {
+          "title": "Active Callsign List",
+          "description": "List of Active Callsigns",
+          "type": "array",
+          "items": {
+            "$ref": "http://schemas.js8path.net/js8path/pskreporter/parsedXml/activeCallsign.json"
+          }
+        }
+      },
+      "required": [
+        "currentSeconds",
+        "lastSequenceNumber",
+        "maxFlowStartSeconds"
+      ]
+    },
+    "activeReceiver": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "http://schemas.js8path.net/js8path/pskreporter/parsedXml/activeReceiver.json",
+      "title": "Active Receiver",
+      "description": "Data about one active receiver from the query results",
+      "type": "object",
+      "properties": {
+        "receiverCallsign": {
+          "title": "Callsign",
+          "description": "The callsign of the receiver",
+          "type": "string",
+          "pattern": "^.*$"
+        },
+        "locator": {
+          "title": "Locator",
+          "description": "The maidenhead locator of the receiver",
+          "type": "string",
+          "pattern": "^^[a-rA-R]{2}[0-9]{2}([a-xA-X]{2}([0-9]{2})?)*$$"
+        },
+        "frequency": {
+          "title": "Frequency",
+          "description": "The frequency of the receiver in Hertz",
+          "$ref": "http://schemas.js8path.net/js8path/data/general/positiveIntegerString.json"
+        },
+        "region": {
+          "title": "Region",
+          "description": "The region in the DXCC entity of the sender",
+          "type": "string"
+        },
+        "DXCC": {
+          "title": "DXCC",
+          "description": "The DXCC entity of the receiver",
+          "type": "string"
+        },
+        "decoderSoftware": {
+          "title": "Decoder Software",
+          "description": "The decoder software used by the receiver",
+          "type": "string"
+        },
+        "antennaInformation": {
+          "title": "Antenna Information",
+          "description": "The antenna information for the receiver",
+          "type": "string"
+        },
+        "mode": {
+          "title": "Mode",
+          "description": "The mode of the receiver",
+          "type": "string"
+        }
+      },
+      "required": []
+    },
+    "receptionReport": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "http://schemas.js8path.net/js8path/pskreporter/parsedXml/receptionReport.json",
+      "title": "Reception Report",
+      "description": "Data about one reception report from the query results",
+      "type": "object",
+      "properties": {
+        "flowStartSeconds": {
+          "title": "Flow Start Seconds",
+          "description": "Unix seconds timestamp for report.",
+          "$ref": "http://schemas.js8path.net/js8path/data/general/positiveIntegerString.json"
+        },
+        "receiverCallsign": {
+          "title": "Receiver Callsign",
+          "description": "The callsign of the receiver",
+          "type": "string",
+          "pattern": "^.*$"
+        },
+        "receiverLocator": {
+          "title": "Receiver Locator",
+          "description": "The maidenhead locator of the receiver",
+          "type": "string",
+          "pattern": "^^[a-rA-R]{2}[0-9]{2}([a-xA-X]{2}([0-9]{2})?)*$$"
+        },
+        "senderCallsign": {
+          "title": "Sender Callsign",
+          "description": "The callsign of the sender",
+          "type": "string",
+          "pattern": "^.*$"
+        },
+        "senderLocator": {
+          "title": "Sender Locator",
+          "description": "The maidenhead locator of the sender",
+          "type": "string",
+          "pattern": "^^[a-rA-R]{2}[0-9]{2}([a-xA-X]{2}([0-9]{2})?)*$$"
+        },
+        "frequency": {
+          "title": "Frequency",
+          "description": "The frequency of the receiver in Hertz",
+          "$ref": "http://schemas.js8path.net/js8path/data/general/positiveIntegerString.json"
+        },
+        "mode": {
+          "title": "Mode",
+          "description": "Transmission Mode",
+          "type": "string"
+        },
+        "senderDXCC": {
+          "title": "Sender DXCC",
+          "description": "The DXCC entity of the sender",
+          "type": "string"
+        },
+        "senderDXCCCode": {
+          "title": "Sender DXCC Code",
+          "description": "The DXCC code of the sender",
+          "type": "string"
+        },
+        "senderDXCCLocator": {
+          "title": "Sender DXCC Locator",
+          "description": "The maidenhead locator of the sender DXCC entity",
+          "type": "string",
+          "pattern": "^^[a-rA-R]{2}[0-9]{2}([a-xA-X]{2}([0-9]{2})?)*$$"
+        },
+        "senderEqslAuthGuar": {
+          "title": "Sender eQSL Auth Guarantee",
+          "description": "Sender eQSL Authentic Guarantee",
+          "type": "string"
+        },
+        "sNR": {
+          "title": "sNR",
+          "description": "Signal to Noise ratio in decibels",
+          "type": "string"
+        }
+      },
+      "required": [
+        "flowStartSeconds",
+        "senderCallsign"
+      ]
+    },
+    "activeCallsign": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "http://schemas.js8path.net/js8path/pskreporter/parsedXml/activeCallsign.json",
+      "title": "Active Callsign",
+      "description": "Data about one active callsign from the query results",
+      "type": "object",
+      "properties": {
+        "callsign": {
+          "title": "callsign",
+          "description": "The (station) callsign",
+          "type": "string",
+          "pattern": "^.*$"
+        },
+        "reports": {
+          "title": "reports",
+          "description": "The number of reports for this callsign",
+          "$ref": "http://schemas.js8path.net/js8path/data/general/positiveIntegerString.json"
+        },
+        "DXCC": {
+          "title": "DXCC",
+          "description": "DXCC Entity",
+          "type": "string"
+        },
+        "DXCCcode": {
+          "title": "DXCC Code",
+          "description": "DXCC Code",
+          "type": "string"
+        },
+        "frequency": {
+          "title": "Frequency",
+          "description": "The frequency of the callsign in Hertz",
+          "$ref": "http://schemas.js8path.net/js8path/data/general/positiveIntegerString.json"
+        }
+      },
+      "required": [
+        "callsign"
+      ]
+    }
+  },
+  "appData": {
+    "queryResponse": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "http://schemas.js8path.net/js8path/pskreporter/appData/queryResponse.json",
+      "title": "PSKReporter Response",
+      "description": "PSKReporter Query Response decoded for use in Application",
+      "type": "object",
+      "properties": {
+        "currentSeconds": {
+          "title": "Current Seconds",
+          "description": "Current seconds value",
+          "type": "integer",
+          "minimum": 0
+        },
+        "lastSequenceNumber": {
+          "title": "Last Sequence Number",
+          "description": "The last sequence number",
+          "type": "integer",
+          "minimum": 0
+        },
+        "maxFlowStartSeconds": {
+          "title": "Max Flow Start Seconds",
+          "description": "The max flow start seconds value",
+          "type": "integer",
+          "minimum": 0
+        },
+        "activeReceivers": {
+          "title": "Active Receiver List",
+          "description": "List of active receivers",
+          "type": "array",
+          "items": {
+            "$ref": "http://schemas.js8path.net/js8path/pskreporter/appData/activeReceiver.json"
+          }
+        },
+        "receptionReports": {
+          "title": "Reception Reports List",
+          "description": "List of Reception Reports",
+          "type": "array",
+          "items": {
+            "$ref": "http://schemas.js8path.net/js8path/pskreporter/appData/receptionReport.json"
+          }
+        },
+        "activeCallsigns": {
+          "title": "Active Callsign List",
+          "description": "List of Active Callsigns",
+          "type": "array",
+          "items": {
+            "$ref": "http://schemas.js8path.net/js8path/pskreporter/appData/activeCallsign.json"
+          }
+        }
+      },
+      "required": [
+        "currentSeconds",
+        "lastSequenceNumber",
+        "maxFlowStartSeconds"
+      ]
+    },
+    "activeReceiver": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "http://schemas.js8path.net/js8path/pskreporter/appData/activeReceiver.json",
+      "title": "Active Receiver",
+      "description": "Data about one active receiver from the query results",
+      "type": "object",
+      "properties": {
+        "callsign": {
+          "title": "Callsign",
+          "description": "The callsign of the receiver",
+          "type": "string",
+          "pattern": "^.*$"
+        },
+        "locator": {
+          "title": "Locator",
+          "description": "The maidenhead locator of the receiver",
+          "type": "string",
+          "pattern": "^^[a-rA-R]{2}[0-9]{2}([a-xA-X]{2}([0-9]{2})?)*$$"
+        },
+        "frequencyHz": {
+          "title": "Frequency (Hz)",
+          "description": "The frequency of the receiver in Hertz",
+          "type": "integer",
+          "minimum": 0
+        },
+        "region": {
+          "title": "Region",
+          "description": "The region in the DXCC entity of the sender",
+          "type": "string"
+        },
+        "DXCC": {
+          "title": "DXCC",
+          "description": "The DXCC entity of the receiver",
+          "type": "string"
+        },
+        "decoderSoftware": {
+          "title": "Decoder Software",
+          "description": "The decoder software used by the receiver",
+          "type": "string"
+        },
+        "antennaInformation": {
+          "title": "Antenna Information",
+          "description": "The antenna information for the receiver",
+          "type": "string"
+        },
+        "mode": {
+          "title": "Mode",
+          "description": "The mode of the receiver",
+          "type": "string"
+        }
+      },
+      "required": []
+    },
+    "receptionReport": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "http://schemas.js8path.net/js8path/pskreporter/appData/receptionReport.json",
+      "title": "Reception Report",
+      "description": "Data about one reception report from the query results",
+      "type": "object",
+      "properties": {
+        "flowStartSeconds": {
+          "title": "Flow Start Seconds",
+          "description": "Unix seconds timestamp for report.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "receiverCallsign": {
+          "title": "Receiver Callsign",
+          "description": "The callsign of the receiver",
+          "type": "string",
+          "pattern": "^.*$"
+        },
+        "receiverLocator": {
+          "title": "Receiver Locator",
+          "description": "The maidenhead locator of the receiver",
+          "type": "string",
+          "pattern": "^^[a-rA-R]{2}[0-9]{2}([a-xA-X]{2}([0-9]{2})?)*$$"
+        },
+        "senderCallsign": {
+          "title": "Sender Callsign",
+          "description": "The callsign of the sender",
+          "type": "string",
+          "pattern": "^.*$"
+        },
+        "senderLocator": {
+          "title": "Sender Locator",
+          "description": "The maidenhead locator of the sender",
+          "type": "string",
+          "pattern": "^^[a-rA-R]{2}[0-9]{2}([a-xA-X]{2}([0-9]{2})?)*$$"
+        },
+        "frequencyHz": {
+          "title": "Frequency (Hz)",
+          "description": "The frequency of the receiver in Hertz",
+          "type": "integer",
+          "minimum": 0
+        },
+        "mode": {
+          "title": "Mode",
+          "description": "Transmission Mode",
+          "type": "string"
+        },
+        "senderDXCC": {
+          "title": "Sender DXCC",
+          "description": "The DXCC entity of the sender",
+          "type": "string"
+        },
+        "senderDXCCCode": {
+          "title": "Sender DXCC Code",
+          "description": "The DXCC code of the sender",
+          "type": "string"
+        },
+        "senderDXCCLocator": {
+          "title": "Sender DXCC Locator",
+          "description": "The maidenhead locator of the sender DXCC entity",
+          "type": "string",
+          "pattern": "^^[a-rA-R]{2}[0-9]{2}([a-xA-X]{2}([0-9]{2})?)*$$"
+        },
+        "senderEqslAuthGuar": {
+          "title": "Sender eQSL Auth Guarantee",
+          "description": "Sender eQSL Authentic Guarantee",
+          "type": "string"
+        },
+        "sNRString": {
+          "title": "sNR String",
+          "description": "Signal to Noise ratio in decibels - as reported",
+          "type": "string"
+        },
+        "sNR": {
+          "title": "sNR",
+          "description": "Signal to Noise ratio in decibels, if reported",
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "flowStartSeconds",
+        "senderCallsign"
+      ]
+    },
+    "activeCallsign": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "$id": "http://schemas.js8path.net/js8path/pskreporter/appData/activeCallsign.json",
+      "title": "Active Callsign",
+      "description": "Data about one active callsign from the query results",
+      "type": "object",
+      "properties": {
+        "callsign": {
+          "title": "callsign",
+          "description": "The (station) callsign",
+          "type": "string",
+          "pattern": "^.*$"
+        },
+        "reports": {
+          "title": "reports",
+          "description": "The number of reports for this callsign",
+          "type": "integer",
+          "minimum": 0
+        },
+        "DXCC": {
+          "title": "DXCC",
+          "description": "DXCC Entity",
+          "type": "string"
+        },
+        "DXCCcode": {
+          "title": "DXCC Code",
+          "description": "DXCC Code",
+          "type": "string"
+        },
+        "frequencyHz": {
+          "title": "Frequency (Hz)",
+          "description": "The frequency of the receiver in Hertz",
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "callsign"
+      ]
+    }
+  }
+}
